@@ -15,18 +15,20 @@
 import pyrebase
 import io
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget
+from PyQt5 import QtGui
+
+class Window(QtGui.QMainWindow):
+    def __init__(self):
+        super(Window,self).__init__()
+        self.setGeometry(50,50,500,300)
+        self.SetWindowTitle("Choose Image")
+        self.show()
+
 
 if __name__ == '__main__':
-    main()
 
-def main():
-    app = QApplicaiton(sys.argv)
-    w = QWidget()
-    w.resize(250,150)
-    w.move(300,300)
-    w.setWindowTitle('Test Title')
-    w.show()
+    app = QApplication(sys.argv)
+    ex = Example()
     sys.exit(app.exec_())
 
 
@@ -45,6 +47,8 @@ def readFile(filePath):
     with open(filePath,'rb') as img:
         imgdata = img.read()
 
+    img1 = {"name": "img1", "url": "google.com"}
+    db.child("images").child("img1").set(img1)
 
-img1 = {"name": "img1", "url": "google.com"}
-db.child("images").child("img1").set(img1)
+if __name__ == '__main__':
+    initUI()
