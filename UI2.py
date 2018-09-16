@@ -57,11 +57,11 @@ class Ui_MainWindow(object):
         self.thresholdVal.isReadOnly()
         self.thresholdVal.setAlignment(QtCore.Qt.AlignCenter)
         self.thresholdVal.setReadOnly(True)
-        self.thresholdVal.setText("0")
+        self.thresholdVal.setText("1")
 
-        self.autoSegment = QtWidgets.QPushButton(self.centralwidget)
-        self.autoSegment.setGeometry(QtCore.QRect(320, 300, 111, 28))
-        self.autoSegment.setObjectName("autoSegment")
+        self.autoSegmentBtn = QtWidgets.QPushButton(self.centralwidget)
+        self.autoSegmentBtn.setGeometry(QtCore.QRect(320, 300, 111, 28))
+        self.autoSegmentBtn.setObjectName("autoSegmentBtn")
 
         MainWindow.setCentralWidget(self.centralwidget)
 
@@ -71,7 +71,7 @@ class Ui_MainWindow(object):
         self.thresholdDec.setEnabled(False)
         self.thresholdInc.setEnabled(False)
         self.thresholdVal.setEnabled(False)
-        self.autoSegment.setEnabled(False)
+        self.autoSegmentBtn.setEnabled(False)
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -79,6 +79,7 @@ class Ui_MainWindow(object):
         self.selectImageBtn.clicked.connect(self.setImage)
         self.thresholdInc.clicked.connect(self.increaseThreshold)
         self.thresholdDec.clicked.connect(self.decreaseThreshold)
+        self.autoSegmentBtn.clicked.connect(self.autoSegment)
         #self.submitBtn.clicked.connect(self.uploadImage)
 
     def retranslateUi(self, MainWindow):
@@ -88,7 +89,7 @@ class Ui_MainWindow(object):
         self.submitBtn.setText(_translate("MainWindow", "Submit"))
         self.thresholdDec.setText(_translate("MainWindow", "▼"))
         self.thresholdInc.setText(_translate("MainWindow", "▲"))
-        self.autoSegment.setText(_translate("MainWindow", "Auto-Segment"))
+        self.autoSegmentBtn.setText(_translate("MainWindow", "Auto-Segment"))
 
     def setImage(self):
         filePath, _ = QtWidgets.QFileDialog.getOpenFileName(None, "Select Image", "", "Image Files (*.png *.jpg *.jpeg *.bmp)")
@@ -100,6 +101,7 @@ class Ui_MainWindow(object):
             self.thresholdInc.setEnabled(True)
             self.thresholdDec.setEnabled(True)
             self.thresholdVal.setEnabled(True)
+            self.autoSegmentBtn.setEnabled(True)
         self.filePath = filePath
         self.segmenter = Segmenter(filePath)
 
@@ -107,12 +109,21 @@ class Ui_MainWindow(object):
         pass
 
     def increaseThreshold(self):
-        self.thresholdVal.setText(str((int)(self.thresholdVal.text()) + 1))
-        self.segmenter.threshold_and_morph(int(self.thresholdVal.text()))
+        val = (int)(self.thresholdVal.text())
+        self.thresholdVal.setText(str(val + 1))
+        val = val + 1
+        self.segmenter.threshold_and_morph(val)
 
     def decreaseThreshold(self):
-        self.thresholdVal.setText(str((int)(self.thresholdVal.text()) - 1))
+        val = (int)(self.thresholdVal.text())
+        if val == 1:
+            return
+        self.thresholdVal.setText(str(val - 1))
+        val = val - 1
+        self.segmenter.threshold_and_morph(val)
 
+    def autoSegment(self):
+        self.segmenter.auto_segment((int)(self.thresholdVal.text()))
 
 if __name__ == "__main__":
     import sys
