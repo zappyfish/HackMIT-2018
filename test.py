@@ -1,7 +1,12 @@
 from segment import Segmenter
 
-s = Segmenter('test.png')
+def test():
+    s = Segmenter('test.png')
 
-s.threshold_and_morph(11)
+    s.threshold_and_morph(11)
 
-s.auto_segment()
+    s.auto_segment()
+
+
+def dog_test():
+    pass
