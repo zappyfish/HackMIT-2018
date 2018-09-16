@@ -1,6 +1,5 @@
 import pyrebase
 import os
-import uuid
 
 class Database:
 
@@ -19,10 +18,8 @@ class Database:
         # Get a reference to the database service
         self._db = firebase.database()
 
-    def push_points(self, img_name, contours):
+    def push_points(self, img_name, contours, uid = 123):
         fileName = os.path.basename(img_name)
-        uid = uuid.uuid4().hex
-        print(fileName)
         d = {}
         for i in range(len(contours)):
             d[i] = contours[i].tolist()
