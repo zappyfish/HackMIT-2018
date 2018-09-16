@@ -18,7 +18,7 @@ class Database:
         # Get a reference to the database service
         self._db = firebase.database()
 
-    def push_points(self, img_name, contours, uid = 123):
+    def push_points(self, img_name, contours, uid = 124):
         fileName = os.path.basename(img_name)
         d = {}
         for i in range(len(contours)):

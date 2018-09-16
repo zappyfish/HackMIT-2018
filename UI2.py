@@ -6,7 +6,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 
-from PyQt5 import QtCore, QtGui, QtWidgets,Qt
+from PyQt5 import QtCore, QtGui, QtWidgets, Qt
 import pyrebase
 import io, os
 from livewiresegmentation import LiveWireSegmentation
@@ -57,7 +57,7 @@ class Ui_MainWindow(object):
         self.thresholdVal.isReadOnly()
         self.thresholdVal.setAlignment(QtCore.Qt.AlignCenter)
         self.thresholdVal.setReadOnly(True)
-        self.thresholdVal.setText("1")
+        self.thresholdVal.setText("5")
 
         self.autoSegmentBtn = QtWidgets.QPushButton(self.centralwidget)
         self.autoSegmentBtn.setGeometry(QtCore.QRect(320, 300, 111, 28))
@@ -102,6 +102,7 @@ class Ui_MainWindow(object):
             self.thresholdDec.setEnabled(True)
             self.thresholdVal.setEnabled(True)
             self.autoSegmentBtn.setEnabled(True)
+            self.selectImageBtn.setEnabled(False)
         self.filePath = filePath
         self.segmenter = Segmenter(filePath)
 
@@ -124,6 +125,11 @@ class Ui_MainWindow(object):
 
     def autoSegment(self):
         self.segmenter.auto_segment((int)(self.thresholdVal.text()))
+        self.showdialog()
+
+    def showdialog(self):
+        msg = QtWidgets.QMessageBox()
+        msg.about(self.centralwidget,"Done","Success!")
 
 if __name__ == "__main__":
     import sys
