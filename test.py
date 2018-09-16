@@ -1,6 +1,6 @@
 from segment import Segmenter
 
-s = Segmenter('test.jpeg')
+s = Segmenter('test2.png')
 
 s.threshold_and_morph(11)
 

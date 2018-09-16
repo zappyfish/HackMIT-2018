@@ -20,6 +20,7 @@ public class DatabaseManager {
     private DatabaseReference mDatabase;
     private Context mContext;
     private final Map<String, UserInfo> mUserIDInfoMap;
+    private boolean shouldTransition = true;
 
     private static DatabaseManager ourInstance;
 
@@ -29,6 +30,10 @@ public class DatabaseManager {
         }
         ourInstance.mContext = context;
         return ourInstance;
+    }
+
+    public void newDrawing() {
+        shouldTransition = true;
     }
 
     private DatabaseManager(Context context) {
@@ -43,8 +48,11 @@ public class DatabaseManager {
                 for (DataSnapshot ds : dataSnapshot.getChildren()) {
                     mUserIDInfoMap.put(ds.getKey(), new UserInfo(ds, mContext ));
                 }
-                Intent i = new Intent(mContext, SelectActivity.class);
-                mContext.startActivity(i);
+                if (shouldTransition) {
+                    shouldTransition = false;
+                    Intent i = new Intent(mContext, SelectActivity.class);
+                    mContext.startActivity(i);
+                }
             }
 
             @Override

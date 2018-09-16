@@ -8,7 +8,12 @@ import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
+
+import java.util.List;
 
 /**
  * TODO: document your custom view class.
@@ -24,9 +29,21 @@ public class CanvasView extends View {
     private float mTextWidth;
     private float mTextHeight;
 
-    public CanvasView(Context context) {
+    float mScaleFactorX, mScaleFactorY;
+
+    private double mCurEnergy = 0;
+    private boolean isDrawing = true;
+
+    private int mStepSize;
+
+    public CanvasView(Context context, int stepSize, int width, int height) {
         super(context);
         mContext = context;
+        Log.d("view: ", "width: " + getWidth() + " height: " + getHeight());
+        mScaleFactorX = getWidth()/(width*1.f);
+        mScaleFactorY = getHeight()/(height*1.f);
+
+        mStepSize = 1;
         init(null, 0);
     }
 
@@ -42,11 +59,31 @@ public class CanvasView extends View {
         init(attrs, defStyle);
     }
 
-    private void drawPoints(Canvas canvas) {
-        for (int[] pt : ImageStateManager.getInstance(mContext).getPoints(1)) {
+    private void drawPoints(Canvas canvas, int stepSize) {
+        List<int[]> pts = ImageStateManager.getInstance(mContext).getPoints(stepSize);
+        for (int[] pt : pts) {
             Paint paint = new Paint();
             paint.setColor(Color.BLACK);
-            canvas.drawCircle(pt[0], pt[1], 5, paint);
+            canvas.drawCircle(pt[0], pt[1], 3, paint);
+        }
+        Paint paint = new Paint();
+        paint.setColor(Color.GREEN);
+        canvas.drawCircle(pts.get(0)[0], pts.get(0)[1], 10, paint);
+    }
+
+    private void drawUserPoints(Canvas canvas) {
+        List<int[]> pts = ImageStateManager.getInstance(mContext).getUserPoints();
+        Color avg = energyToColor(ImageStateManager.getInstance(mContext).getAverageEnergy());
+        Paint aP = new Paint();
+        aP.setColor(avg.toArgb());
+        for (int[] pt : pts) {
+            canvas.drawCircle(pt[0], pt[1], 3, aP);
+        }
+        if (pts.size() > 0) {
+            Paint curPaint = new Paint();
+            curPaint.setColor(energyToColor(mCurEnergy).toArgb());
+            int len = pts.size() - 1;
+            canvas.drawCircle(pts.get(0)[0], pts.get(0)[1], 10, curPaint);
         }
     }
 
@@ -86,7 +123,8 @@ public class CanvasView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        drawPoints(canvas);
+        drawPoints(canvas, mStepSize);
+        drawUserPoints(canvas);
         // TODO: consider storing these as member variables to reduce
         // allocations per draw cycle.
         int paddingLeft = getPaddingLeft();
@@ -170,5 +208,48 @@ public class CanvasView extends View {
      */
     public void setExampleDrawable(Drawable exampleDrawable) {
         mExampleDrawable = exampleDrawable;
+    }
+
+    @Override
+    public boolean onTouchEvent (MotionEvent e) {
+
+        float px, py;
+        int ipy, ipx;
+        if (isDrawing) {
+            switch (e.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    px = e.getX() / mScaleFactorX;
+                    py = e.getY() / mScaleFactorY;
+                    ipy = (int) py;
+                    ipx = (int) px;
+                    mCurEnergy = ImageStateManager.getInstance(mContext).getEnergy(ipx, ipy);
+                    invalidate(); // add it here
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    px = e.getX() / mScaleFactorX;
+                    py = e.getY() / mScaleFactorY;
+                    ipy = (int) py;
+                    ipx = (int) px;
+                    mCurEnergy = ImageStateManager.getInstance(mContext).getEnergy(ipx, ipy);
+                    invalidate(); // add it here
+                    break;
+                case MotionEvent.ACTION_UP:
+                    isDrawing = false;
+                    invalidate(); // add it here
+                    break;
+            }
+        }
+
+        return true;
+
+    }
+
+    private Color energyToColor(double energy) {
+        int blue = 0, green = 255, red = 0;
+        green -= energy*5;
+        red += energy * 5;
+        if (green < 0) green = 0;
+        if (red > 255) red = 255;
+        return Color.valueOf(red, green, blue);
     }
 }

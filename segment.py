@@ -3,6 +3,8 @@ import cv2
 import numpy as np
 import scipy.ndimage as nd
 from database import Database
+import scipy.misc
+
 
 class Segmenter:
 
@@ -13,10 +15,10 @@ class Segmenter:
     def __init__(self, filename):
         self._name = filename.split('.')[0]
         self._img = cv2.imread(filename)
+        self._img = scipy.misc.imresize(self._img, 1.3)
         x, y, c = self._img.shape
         self._blank = np.zeros((x, y, c), np.uint8)
         # self._blank.fill(255)
-        # self._img = cv2.resize(self._img, (300, 300))
         im = cv2.GaussianBlur(self._img, (3, 3), 0)
         im = cv2.Laplacian(im, cv2.CV_8U)
         self._pre_thresh = im
