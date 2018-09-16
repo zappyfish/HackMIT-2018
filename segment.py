@@ -15,6 +15,7 @@ class Segmenter:
     def __init__(self, filename):
         self._name = filename.split('.')[0]
         self._img = cv2.imread(filename)
+        self._scissors_image = cv2.cvtColor(self._img, cv2.COLOR_BGR2GRAY)
         # self._img = scipy.misc.imresize(self._img, 1.3)
         x, y, c = self._img.shape
         self._blank = np.zeros((x, y, c), np.uint8)
@@ -72,16 +73,16 @@ class Segmenter:
             self._path.append(coord)
 
     def compute_path(self, start, end):
-        algorithm = LiveWireSegmentation(self._grayscale)
+        algorithm = LiveWireSegmentation(self._scissors_image)
         path = algorithm.compute_shortest_path(start, end)
         return path
 
     def onMouse(self, event, x, y, flags, param):
-        if event == cv2.EVENT_LBUTTONDBLCLK:
-            print("dlick!")
-            pt = self.nearest_black(x, y)
-            x = pt[0]
-            y = pt[1]
+        if event == cv2.EVENT_RBUTTONDOWN:
+            print("dclick!")
+            # pt = self.nearest_black(x, y)
+            # x = pt[0]
+            # y = pt[1]
             if not self._started:
                 self._start_coords = (x, y)
                 self._last_xy = (x, y)
@@ -94,9 +95,9 @@ class Segmenter:
         elif event == cv2.EVENT_LBUTTONDOWN:
             print("click")
             if self._started:
-                pt = self.nearest_black(x, y)
-                x = pt[0]
-                y = pt[1]
+                # pt = self.nearest_black(x, y)
+                # x = pt[0]
+                # y = pt[1]
                 path = self.compute_path(self._last_xy, (x, y))
                 test_path = [x for x in self._path]
                 for x in path:
@@ -108,7 +109,8 @@ class Segmenter:
         cv2.setMouseCallback(Segmenter.WINDOW_NAME, self.onMouse)
         cv2.imshow(Segmenter.WINDOW_NAME, self._img)
         while True:
-            key = cv2.waitKey(50) & 0xFF
+            key = cv2.waitKey(50) & 0xff
+
 
     def auto_segment(self, min_length=20):
         _th, contours, hierarchy = cv2.findContours(self._grayscale, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
@@ -167,9 +169,12 @@ class Segmenter:
 
     def display_path(self, path):
         img = self._img.copy()
-        img = self._grayscale.copy()
+        # img = self._scissors_image.copy()
         for i in range(1, len(path)):
             start = path[i - 1]
             end = path[i]
             cv2.line(img, start, end, (0, 255, 0), 2)
         cv2.imshow(Segmenter.WINDOW_NAME, img)
+
+    def intelligent_scissors(self):
+        self.segment()

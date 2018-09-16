@@ -10,8 +10,8 @@ public class CanvasActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int width = getWindow().getDecorView().getWidth();
-        int height = getWindow().getDecorView().getHeight();
-        setContentView(new CanvasView(CanvasActivity.this, 1));
+        Bundle bundle = getIntent().getExtras();
+        int steps = (10 * (Integer.parseInt(bundle.getString("difficulty")) - 1)) + 1;
+        setContentView(new CanvasView(CanvasActivity.this, steps, (String)bundle.get("name"), (String)bundle.get("user")));
     }
 }

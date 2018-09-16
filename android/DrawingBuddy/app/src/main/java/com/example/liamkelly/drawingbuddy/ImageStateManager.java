@@ -15,13 +15,14 @@ public class ImageStateManager {
 
     private List<int[]> mImagePoints;
     private List<int[]> mUserPoints;
+    private Set<int[]> mNearestVisited;
     private int xMax = 0;
     private int yMax = 0;
 
     private int startX = 0;
     private int startY = 0;
 
-    private final static int LOL_BUFFER = 200;
+    private final static int GARBAGE_AT_CODING_BUFFER = 1000;
 
     private double mTotalEnergy;
 
@@ -45,6 +46,7 @@ public class ImageStateManager {
     // Index y then x
     public void setImagePoints(List<int[]> pts) {
         mUserPoints = new LinkedList<>();
+        mNearestVisited = new HashSet<>();
         mTotalEnergy = 0;
         mImagePoints = pts;
         xMax = 0;
@@ -53,8 +55,8 @@ public class ImageStateManager {
             xMax = Math.max(xMax, pt[0]);
             yMax = Math.max(yMax, pt[1]);
         }
-        xMax+= LOL_BUFFER;
-        yMax+= LOL_BUFFER;
+        xMax+= GARBAGE_AT_CODING_BUFFER;
+        yMax+= GARBAGE_AT_CODING_BUFFER;
         mGrid = new int[xMax][];
         // Toast.makeText(mContext, "x: " + xMax + " y: " + yMax, Toast.LENGTH_SHORT).show();
         for (int x = 0; x < xMax; x++) {
@@ -114,6 +116,7 @@ public class ImageStateManager {
     public double getEnergy(int x, int y) {
         mUserPoints.add(new int[]{x, y});
         int[] nearest = getNearest(x, y);
+        mNearestVisited.add(nearest);
 //        if (nearest == null) {
 //            nearest = new int[] {x, y};
 //            Toast.makeText(mContext, "null for : " + x + "," + y, Toast.LENGTH_SHORT).show();
@@ -149,14 +152,8 @@ public class ImageStateManager {
         return mTotalEnergy/mUserPoints.size();
     }
 
-    public static class UserPoint {
-
-        private final double mEnergy;
-        private final int[] mPoint;
-
-        public UserPoint(int[] pt, double energy) {
-            mEnergy = energy;
-            mPoint = pt;
-        }
+    public double getPercentageCompleted() {
+        return (mNearestVisited.size() * 1.0f) / (mImagePoints.size());
     }
+
 }
