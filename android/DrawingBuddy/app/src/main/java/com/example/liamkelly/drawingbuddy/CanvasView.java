@@ -1,18 +1,25 @@
 package com.example.liamkelly.drawingbuddy;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Base64;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 
 /**
@@ -35,11 +42,17 @@ public class CanvasView extends View {
     private boolean isDrawing = true;
 
     private int mStepSize;
+    private long startTime;
+    private String mName;
+    private String mUserID;
 
-    public CanvasView(Context context, int stepSize) {
+    public CanvasView(Context context, int stepSize, String name, String user) {
         super(context);
         mContext = context;
         mStepSize = stepSize;
+        mName = name;
+        mUserID = user;
+        setDrawingCacheEnabled(true);
         init(null, 0);
     }
 
@@ -124,7 +137,9 @@ public class CanvasView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        drawPoints(canvas, mStepSize);
+        if (isDrawing) {
+            drawPoints(canvas, mStepSize);
+        }
         drawUserPoints(canvas);
         // TODO: consider storing these as member variables to reduce
         // allocations per draw cycle.
@@ -142,6 +157,16 @@ public class CanvasView extends View {
             mExampleDrawable.setBounds(paddingLeft, paddingTop,
                     paddingLeft + contentWidth, paddingTop + contentHeight);
             mExampleDrawable.draw(canvas);
+        }
+        if (!isDrawing) {
+            try {
+                getDrawingCache().compress(Bitmap.CompressFormat.JPEG, 100, new FileOutputStream(new File(mContext.getFilesDir().getPath().toString() + "/drawingbuddy.jpg")));
+                sendToDatabaseWhenDone();
+                Intent i = new Intent(mContext, CompletionActivity.class);
+                mContext.startActivity(i);
+            } catch (Exception e) {
+                Log.e("exception", e.getMessage());
+            }
         }
     }
 
@@ -217,6 +242,7 @@ public class CanvasView extends View {
         if (isDrawing) {
             switch (e.getAction()) {
                 case MotionEvent.ACTION_DOWN:
+                    startTime = android.os.SystemClock.uptimeMillis();
                     x = (int)e.getX();
                     y = (int)e.getY();
                     mCurEnergy = ImageStateManager.getInstance(mContext).getEnergy(x, y);
@@ -230,7 +256,6 @@ public class CanvasView extends View {
                     break;
                 case MotionEvent.ACTION_UP:
                     isDrawing = false;
-                    sendToDatabaseWhenDone();
                     invalidate(); // add it here
                     break;
             }
@@ -248,6 +273,15 @@ public class CanvasView extends View {
     }
 
     private void sendToDatabaseWhenDone() {
+        long time = android.os.SystemClock.uptimeMillis() - startTime;
+        int avgEnergy = (int)ImageStateManager.getInstance(mContext).getAverageEnergy();
+        double difficulty = 1.0/mStepSize;
+        Bitmap bm = BitmapFactory.decodeFile(mContext.getFilesDir().getPath().toString() + "/drawingbuddy.jpg");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
+        byte[] b = baos.toByteArray();
+        String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
+        DatabaseManager.getInstance(mContext).sendResults(mUserID, mName, avgEnergy, time, encodedImage, difficulty);
         //
         // img_name:
         // { 1:

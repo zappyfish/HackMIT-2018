@@ -2,6 +2,7 @@ package com.example.liamkelly.drawingbuddy;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
@@ -10,6 +11,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -50,7 +53,7 @@ public class DatabaseManager {
                 }
                 if (shouldTransition) {
                     shouldTransition = false;
-                    Intent i = new Intent(mContext, SelectActivity.class);
+                    final Intent i = new Intent(mContext, SelectActivity.class);
                     mContext.startActivity(i);
                 }
             }
@@ -81,7 +84,14 @@ public class DatabaseManager {
         }
     }
 
-    public void sendResults() {
-
+    public void sendResults(String userId, String name, int avgEnergy, long time, String img, double difficulty) {
+        // add timestamp and have a unique id per drawing
+        SimpleDateFormat s = new SimpleDateFormat("ddMMyyyyhhmmss");
+        String format = s.format(new Date());
+        DatabaseReference ref = mDatabase.child(userId).child(name).child("Attempts").child(format);
+        ref.child("average_energy").setValue(avgEnergy);
+        ref.child("time").setValue(time);
+        ref.child("image").setValue(img);
+        ref.child("difficulty").setValue(difficulty);
     }
 }
