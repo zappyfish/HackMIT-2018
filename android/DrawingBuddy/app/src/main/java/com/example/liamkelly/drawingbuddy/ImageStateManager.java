@@ -21,7 +21,9 @@ public class ImageStateManager {
     private int startX = 0;
     private int startY = 0;
 
-    private double mAverageEnergy;
+    private final static int LOL_BUFFER = 200;
+
+    private double mTotalEnergy;
 
     private int[][] mGrid;
     private Context mContext;
@@ -32,6 +34,7 @@ public class ImageStateManager {
         if (ourInstance == null) {
             ourInstance = new ImageStateManager(context);
         }
+        ourInstance.mContext = context;
         return ourInstance;
     }
 
@@ -42,7 +45,7 @@ public class ImageStateManager {
     // Index y then x
     public void setImagePoints(List<int[]> pts) {
         mUserPoints = new LinkedList<>();
-        mAverageEnergy = 0;
+        mTotalEnergy = 0;
         mImagePoints = pts;
         xMax = 0;
         yMax = 0;
@@ -50,8 +53,8 @@ public class ImageStateManager {
             xMax = Math.max(xMax, pt[0]);
             yMax = Math.max(yMax, pt[1]);
         }
-        xMax++;
-        yMax++;
+        xMax+= LOL_BUFFER;
+        yMax+= LOL_BUFFER;
         mGrid = new int[xMax][];
         // Toast.makeText(mContext, "x: " + xMax + " y: " + yMax, Toast.LENGTH_SHORT).show();
         for (int x = 0; x < xMax; x++) {
@@ -73,9 +76,9 @@ public class ImageStateManager {
         return new int[]{x, y};
         */
         Queue<int[]> search = new LinkedList<>();
-        int[][] visited = new int[mGrid.length][];
+        boolean[][] visited = new boolean[mGrid.length][];
         for (int i = 0; i < mGrid.length; i++) {
-            visited[i] = new int[mGrid[i].length];
+            visited[i] = new boolean[mGrid[i].length];
         }
         addToQueue(x, y, visited, search);
         int searches = 0;
@@ -87,36 +90,37 @@ public class ImageStateManager {
                 // Toast.makeText(mContext, "@ " + x + "," + y + " and near " + i + "," + j, Toast.LENGTH_SHORT).show();
                 return next;
             } else {
-                addToQueue(x + 1, y, visited, search);
-                addToQueue(x - 1, y, visited, search);
-                addToQueue(x, y - 1, visited, search);
-                addToQueue(x, y + 1, visited, search);
+                addToQueue(i + 1, j, visited, search);
+                addToQueue(i - 1, j, visited, search);
+                addToQueue(i, j - 1, visited, search);
+                addToQueue(i, j + 1, visited, search);
             }
         }
 
-        // Toast.makeText(mContext, "searches: " + searches, Toast.LENGTH_SHORT).show();
         return null;
     }
 
-    private void addToQueue(int x, int y, int[][] visited, Queue<int[]> search) {
+    private void addToQueue(int x, int y, boolean[][] visited, Queue<int[]> search) {
         if (x >= 0 && x < mGrid.length && y >= 0 && y < mGrid[0].length) {
-            if (visited[x][y] == 0) {
+            if (!visited[x][y]) {
                 search.add(new int[]{x, y});
-                visited[x][y] = 1;
+                visited[x][y] = true;
             } else {
             }
+        } else {
         }
     }
 
     public double getEnergy(int x, int y) {
         mUserPoints.add(new int[]{x, y});
         int[] nearest = getNearest(x, y);
-        if (nearest == null) {
-            nearest = new int[] {x, y};
-            Toast.makeText(mContext, "null for : " + x + "," + y, Toast.LENGTH_SHORT).show();
-        }
+//        if (nearest == null) {
+//            nearest = new int[] {x, y};
+//            Toast.makeText(mContext, "null for : " + x + "," + y, Toast.LENGTH_SHORT).show();
+//        } else {
+//            Toast.makeText(mContext, "not null", Toast.LENGTH_SHORT).show();
+//        }
         double energy = Math.sqrt(Math.pow(x - nearest[0], 2) + Math.pow(y - nearest[1], 2));
-        Toast.makeText(mContext, "energy: " + energy, Toast.LENGTH_SHORT).show();
         updateAverageEnergy(energy);
         return energy;
     }
@@ -138,15 +142,21 @@ public class ImageStateManager {
     }
 
     private void updateAverageEnergy(double energy) {
-        if (mUserPoints.size() > 1) {
-            int size = mUserPoints.size();
-            mAverageEnergy = (mAverageEnergy * ((size - 1)/size)) + energy/size;
-        } else {
-            mAverageEnergy = energy;
-        }
+        mTotalEnergy += energy;
     }
 
     public double getAverageEnergy() {
-        return mAverageEnergy;
+        return mTotalEnergy/mUserPoints.size();
+    }
+
+    public static class UserPoint {
+
+        private final double mEnergy;
+        private final int[] mPoint;
+
+        public UserPoint(int[] pt, double energy) {
+            mEnergy = energy;
+            mPoint = pt;
+        }
     }
 }

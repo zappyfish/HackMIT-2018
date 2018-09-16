@@ -15,7 +15,7 @@ class Segmenter:
     def __init__(self, filename):
         self._name = filename.split('.')[0]
         self._img = cv2.imread(filename)
-        #self._img = scipy.misc.imresize(self._img, 1.3)
+        # self._img = scipy.misc.imresize(self._img, 1.3)
         x, y, c = self._img.shape
         self._blank = np.zeros((x, y, c), np.uint8)
         # self._blank.fill(255)
@@ -23,7 +23,6 @@ class Segmenter:
         im = cv2.Laplacian(im, cv2.CV_8U)
         self._pre_thresh = im
         self.threshold_and_morph(5)
-        print("filtered")
         cv2.imwrite('gray.png', self._grayscale)
         self._pressed_key = None
         self._last_xy = (0, 0)

@@ -25,7 +25,7 @@
       </value>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 2.7 (hackmit2018)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_3" assert-keyword="false" jdk-15="false" project-jdk-name="Android API 25 Platform" project-jdk-type="Android SDK" />
   <component name="ProjectType">
     <option name="id" value="Android" />
   </component>

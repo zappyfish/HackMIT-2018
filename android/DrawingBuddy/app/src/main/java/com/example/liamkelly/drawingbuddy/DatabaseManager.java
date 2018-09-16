@@ -80,4 +80,8 @@ public class DatabaseManager {
             return new LinkedList<>();
         }
     }
+
+    public void sendResults() {
+
+    }
 }

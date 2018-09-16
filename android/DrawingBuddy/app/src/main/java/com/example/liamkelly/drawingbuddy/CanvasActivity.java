@@ -12,7 +12,6 @@ public class CanvasActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         int width = getWindow().getDecorView().getWidth();
         int height = getWindow().getDecorView().getHeight();
-        Log.d("activity", "height: " + height + " width: " + width);
-        setContentView(new CanvasView(CanvasActivity.this, 1, width, height));
+        setContentView(new CanvasView(CanvasActivity.this, 1));
     }
 }
