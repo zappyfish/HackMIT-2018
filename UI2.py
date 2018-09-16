@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-
-# Form implementation generated from reading ui file 'C:\Users\Raffi\Desktop\ver2.ui'
-#
-# Created by: PyQt5 UI code generator 5.11.2
-#
-# WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets, Qt
 import pyrebase
@@ -124,12 +117,17 @@ class Ui_MainWindow(object):
         self.segmenter.threshold_and_morph(val)
 
     def autoSegment(self):
+        self.showInfoDialog()
         self.segmenter.auto_segment((int)(self.thresholdVal.text()))
-        self.showdialog()
+        self.showSuccessDialog()
 
-    def showdialog(self):
+    def showSuccessDialog(self):
         msg = QtWidgets.QMessageBox()
-        msg.about(self.centralwidget,"Done","Success!")
+        msg.about(self.centralwidget,"Done","Success! Outline has been added to the database.")
+
+    def showInfoDialog(self):
+        msg = QtWidgets.QMessageBox()
+        msg.about(self.centralwidget,"Info","Press Y key to accept a portion of the outline, and press any other key to reject")
 
 if __name__ == "__main__":
     import sys
