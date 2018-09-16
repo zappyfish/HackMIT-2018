@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "hackmit-2018-111f5",
+  "private_key_id": "2b1009a22c4b85b60912cb4947493acd2338e60c",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCntZuL4mQFIAFB\nUngbKvoT63RtQZwtlJgcZMfODM7RA103CmMk4rGX5ZYnJnASeOOuPottTeIJKwgc\nHcjyT5YiS/b1m8U6Tlodo46YJPfTSWUGLASFPbMI5JJDpHMSatR937j7rcG/LfTi\nPBXFddXaarOfiC5LTc4VvrtkdsIW8jTIZ0BTYXQeKz4HHuspdmhtHLdrjxlIuOre\n/rsHV7fx3GmbCg9T1Bv0gAdtzs9h4HxEwcpHG6taWHZ3//OCYiSVddJ+ske+5OSl\nHyM/SE9kyQM5LgQyplqFJfGKViMuYBMD/Q9asHJoX4EEIdJcsCVKEEfLEYeGzM8C\n/+PIZaQbAgMBAAECggEABMGDLDfa00RhlLskeczBs7/pGNIT/jzpBWEcQ20cjlPU\nmGN8hUbCd4bEt86Avh1cg4v1gz+CqfTk8XsswCZeoRFbawKkWK9xIccKG6lst7qs\nmTy1Uhv6UEW/Ghj3RG3wIbOu+MAoLuY8PBAtI+DgFCYTevIvMeZ+ciJrCQHPJjxj\nRUVqif1VQMfqXS321oWDAw+IcjTfSnCwd9HUKxE4VeSh6EMABTKCCiqOyv/lo/hQ\nkUkitGdHnd8g0LzGOsnj0ke/Jyw2t6B4Y96Z8jbtvAQeTPNPW5hI1EFrZuSG9DWj\nJWQWL+sdiUQ0eyrpyCwBtLfMGtDUn03Lh5gYAcnvpQKBgQDsTwXYRzZQrXVi8udp\nm9nLiZfFrD6Dahsqf/EiaFW3puKbq4Df4TUbd+4iZwQRWLaBVtp84ttk7yQfOcJ8\n7Ip4awqG8bBPJiw5sq5G2B9ImdY6sP7EDLpuUGXY0GhItkJlx5JDwO1Ak54wNWDt\nTHnKtpw8fNdRhyhfW8A24CCcPQKBgQC1rzaX/vZq2Hp3rrjYv38P089lE4CXEPcF\n7nliOdlhLmXkraMuLkuiG2CEvAnyveRp3pX3BRIySX3wpCjOUg4ivbqCCk46dfvQ\n/KKcyjdtjvsBIsnldLFA6f074JOVFO01zoh3/QkJsc2tvAjfrfXEm+yYjEpnkYa0\nv3mVXnaPNwKBgAbv+vfyf0G3Fe8lum17SdWT4ITJHby17L4+q1GbRojxuU1gp5Pr\nBKgdyTvxUklAFXuOlTN9ZXt9Gc5g37jTKO2IFvMHPWnVcQ7wk/U4exKikYt/jrsq\ntH5wlczbsXQRBbn/NegPTefLbaV0q7fLuvecjNGpyJh4I1NJWkdCJTLxAoGASwW8\n72qy6k/V0lHttmLs3uZBv6Ub9kVlG6frq6njn4N/Q7yHo2wugxP2+RiEqx3KkgT9\nu/D2IJnETXgb+YZcm+/ocgY7Y1yQzS1lIIVH+g+OiluJLxzOjNWSYgVMK8VmZk+Q\nfquX7c7j9Zetul+lGrigLCXSG442J7DhTdKh9mUCgYA5BdjwGKoVoNqcUMGe15lW\nR2BBhQCNCnkW6gNkwcqTPsHpZfGxWEr2ybhrilp1dxeNeD7u0tfXp1/xl9armPb5\nQO0QN0nnakmWxXIut4deZOLwccPPt6bFzW0vqdLt7vdLq0OZKeM+vQnaLEwPErjX\nV5yrlCFCey8UMaw+YyHwbg==\n-----END PRIVATE KEY-----\n",
+  "client_email": "hackmitserviceaccount@hackmit-2018-111f5.iam.gserviceaccount.com",
+  "client_id": "102960314533323777847",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/hackmitserviceaccount%40hackmit-2018-111f5.iam.gserviceaccount.com"
+}

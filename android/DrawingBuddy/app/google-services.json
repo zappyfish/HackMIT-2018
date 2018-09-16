@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "907790921058",
+    "firebase_url": "https://hackmit-2018-111f5.firebaseio.com",
+    "project_id": "hackmit-2018-111f5",
+    "storage_bucket": "hackmit-2018-111f5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:907790921058:android:ac769b9900847127",
+        "android_client_info": {
+          "package_name": "com.example.liamkelly.drawingbuddy"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "907790921058-ege37acc1b7vid143oaoj056b02ao8ia.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAt97ABps9afCjw5NmCzWEC29nEs0ob6do"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

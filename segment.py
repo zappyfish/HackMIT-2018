@@ -2,6 +2,9 @@ from livewiresegmentation import LiveWireSegmentation
 import cv2
 import numpy as np
 import scipy.ndimage as nd
+from database import Database
+import scipy.misc
+
 
 class Segmenter:
 
@@ -10,8 +13,12 @@ class Segmenter:
     ERODE_KERNEL = np.ones((10, 10), np.uint8)
 
     def __init__(self, filename):
+        self._name = filename.split('.')[0]
         self._img = cv2.imread(filename)
-        # self._img = cv2.resize(self._img, (300, 300))
+        self._img = scipy.misc.imresize(self._img, 1.3)
+        x, y, c = self._img.shape
+        self._blank = np.zeros((x, y, c), np.uint8)
+        # self._blank.fill(255)
         im = cv2.GaussianBlur(self._img, (3, 3), 0)
         im = cv2.Laplacian(im, cv2.CV_8U)
         self._pre_thresh = im
@@ -23,6 +30,7 @@ class Segmenter:
         self._start_coords = self._last_xy
         self._path = []
         self._started = False
+        self._db = Database()
 
     def threshold_and_morph(self, thresh, kernel=KERNEL):
         thresh, im = cv2.threshold(self._pre_thresh, thresh, 255, cv2.THRESH_BINARY)
@@ -103,7 +111,7 @@ class Segmenter:
         while True:
             key = cv2.waitKey(50) & 0xFF
 
-    def auto_segment(self, min_length=50):
+    def auto_segment(self, min_length=20):
         _th, contours, hierarchy = cv2.findContours(self._grayscale, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
         min_contours = []
         for contour in contours:
@@ -119,11 +127,44 @@ class Segmenter:
             if key == ord('y'):
                 desired_contours.append(contour)
         img = self._img.copy()
-        cv2.drawContours(img, desired_contours, -1, [255, 0, 0], 3)
+        x, y, c = img.shape
+        final_contours = self.get_points(desired_contours, x, y - 100)
+        # self.close_contours(final_contours)
+        cv2.drawContours(img, final_contours, -1, [255, 0, 0], 3)
         cv2.imshow("Segmented", img)
-        cv2.waitKey(10) & 0xFF
+        cv2.waitKey(50) & 0xFF
+        #self.close_contours(final_contours)
+        self._db.push_points(self._name, final_contours)
 
+    def get_points(self, contours, max_x, max_y):
+        desired = []
+        for contour in contours:
+            delete = []
+            for pt in range(len(contour)):
+                xy = contour[pt][0]
+                if self.near_border(xy[0], xy[1], max_x, max_y):
+                    delete.append(pt)
+            next_contour = np.delete(contour, delete, 0)
+            if len(next_contour) > 0:
+                desired.append(next_contour)
+        return desired
 
+    def near_border(self, x, y, max_x, max_y):
+        thresh = 10
+        return x-thresh <= 0 or x + thresh >= max_x or y - thresh <= 0 or y + thresh >= max_y
+
+    def close_contours(self, final_contours, kernel=np.ones((5, 5), np.uint8)):
+        image = self._blank.copy()
+        cv2.drawContours(image, final_contours, -1, [255, 255, 255], 3)
+        cv2.imshow("Closed Contours", image)
+        cv2.waitKey(0)
+        image = cv2.dilate(image, kernel, iterations=3)
+        image = cv2.erode(image, kernel, iterations=1)
+        image = cv2.dilate(image, kernel, iterations=3)
+        image = cv2.erode(image, kernel, iterations=4)
+        image = cv2.dilate(image, kernel, iterations=5)
+        cv2.imshow("Closed Contours", image)
+        cv2.waitKey(0)
 
     def display_path(self, path):
         img = self._img.copy()
