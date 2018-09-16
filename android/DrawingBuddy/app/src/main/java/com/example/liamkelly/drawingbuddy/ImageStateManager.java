@@ -1,5 +1,8 @@
 package com.example.liamkelly.drawingbuddy;
 
+import android.content.Context;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -17,31 +20,40 @@ public class ImageStateManager {
     private int startY = 0;
 
     private int[][] mGrid;
+    private Context mContext;
 
-    private static final ImageStateManager ourInstance = new ImageStateManager();
+    private static ImageStateManager ourInstance;
 
-    public static ImageStateManager getInstance() {
+    public static ImageStateManager getInstance(Context context) {
+        if (ourInstance == null) {
+            ourInstance = new ImageStateManager(context);
+        }
         return ourInstance;
     }
 
-    private ImageStateManager() {
-
+    private ImageStateManager(Context context) {
+        mContext = context;
     }
 
     // Index y then x
     public void setImagePoints(List<int[]> pts) {
         mImagePoints = pts;
+        xMax = 0;
+        yMax = 0;
         for (int[] pt : mImagePoints) {
             xMax = Math.max(xMax, pt[0]);
             yMax = Math.max(yMax, pt[1]);
         }
-        mGrid = new int[yMax][];
-        for (int y = 0; y < yMax; y++) {
-            mGrid[y] = new int[xMax];
+        mGrid = new int[xMax][];
+        Toast.makeText(mContext, "x: " + xMax + " y: " + yMax, Toast.LENGTH_SHORT).show();
+        for (int x = 0; x < xMax; x++) {
+            mGrid[x] = new int[yMax];
         }
+        /*
         for (int[] pt : mImagePoints) { // Create grid of the pixels.
-            mGrid[pt[1]][pt[0]] = 1;
+            mGrid[pt[0]][pt[1]] = 1;
         }
+        */
         startX = mImagePoints.get(0)[0]; // We assume we have at least one point in our contour
         startY = mImagePoints.get(0)[1];
     }
@@ -57,7 +69,7 @@ public class ImageStateManager {
         while (!search.isEmpty()) {
             int[] next = search.poll();
             int i = next[0], j = next[1];
-            if (mGrid[j][i] == 1) {
+            if (mGrid[i][j] == 1) {
                 return next;
             } else {
                 addToQueue(x + 1, y, visited, search);
@@ -70,10 +82,10 @@ public class ImageStateManager {
     }
 
     private void addToQueue(int x, int y, int[][] visited, Queue<int[]> search) {
-        if (x >= 0 && x < mGrid[0].length && y >= 0 && y < mGrid.length) {
-            if (visited[y][x] != 0) {
+        if (x >= 0 && x < mGrid.length && y >= 0 && y < mGrid[0].length) {
+            if (visited[x][y] != 0) {
                 search.add(new int[]{x, y});
-                visited[y][x] = 1;
+                visited[x][y] = 1;
             }
         }
     }

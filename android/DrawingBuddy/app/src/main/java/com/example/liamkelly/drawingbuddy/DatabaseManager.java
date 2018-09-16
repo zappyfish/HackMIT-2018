@@ -66,7 +66,6 @@ public class DatabaseManager {
     }
 
     public List<String> getImageNames(String userId) {
-        Toast.makeText(mContext, userId, Toast.LENGTH_SHORT).show();
         if (mUserIDInfoMap.containsKey(userId)) {
             return mUserIDInfoMap.get(userId).getImages();
         } else {

@@ -37,7 +37,7 @@ public class SelectActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String img = (String)parent.getItemAtPosition(position);
                 Intent i = new Intent(SelectActivity.this, CanvasActivity.class);
-                ImageStateManager.getInstance().setImagePoints(DatabaseManager.getInstance(SelectActivity.this).getPoints(mUserID.getText().toString(), img));
+                ImageStateManager.getInstance(SelectActivity.this).setImagePoints(DatabaseManager.getInstance(SelectActivity.this).getPoints(mUserID.getText().toString(), img));
                 startActivity(i);
             }
         });
@@ -46,9 +46,6 @@ public class SelectActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 List<String> images = DatabaseManager.getInstance(SelectActivity.this).getImageNames(mUserID.getText().toString());
-                for (String img : images) {
-                    Toast.makeText(SelectActivity.this, img, Toast.LENGTH_LONG).show();
-                }
                 ArrayAdapter adapter = new ArrayAdapter<String>(SelectActivity.this,
                         android.R.layout.simple_list_item_1,
                         (ArrayList<String>)images);

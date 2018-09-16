@@ -19,23 +19,35 @@ public class CanvasView extends View {
     private float mExampleDimension = 0; // TODO: use a default from R.dimen...
     private Drawable mExampleDrawable;
 
+    private Context mContext;
     private TextPaint mTextPaint;
     private float mTextWidth;
     private float mTextHeight;
 
     public CanvasView(Context context) {
         super(context);
+        mContext = context;
         init(null, 0);
     }
 
     public CanvasView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mContext = context;
         init(attrs, 0);
     }
 
     public CanvasView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        mContext = context;
         init(attrs, defStyle);
+    }
+
+    private void drawPoints(Canvas canvas) {
+        for (int[] pt : ImageStateManager.getInstance(mContext).getPoints(1)) {
+            Paint paint = new Paint();
+            paint.setColor(Color.BLACK);
+            canvas.drawCircle(pt[0], pt[1], 5, paint);
+        }
     }
 
     private void init(AttributeSet attrs, int defStyle) {
@@ -68,22 +80,13 @@ public class CanvasView extends View {
         mTextPaint.setTextAlign(Paint.Align.LEFT);
 
         // Update TextPaint and text measurements from attributes
-        invalidateTextPaintAndMeasurements();
-    }
-
-    private void invalidateTextPaintAndMeasurements() {
-        mTextPaint.setTextSize(mExampleDimension);
-        mTextPaint.setColor(mExampleColor);
-        mTextWidth = mTextPaint.measureText(mExampleString);
-
-        Paint.FontMetrics fontMetrics = mTextPaint.getFontMetrics();
-        mTextHeight = fontMetrics.bottom;
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        drawPoints(canvas);
         // TODO: consider storing these as member variables to reduce
         // allocations per draw cycle.
         int paddingLeft = getPaddingLeft();
@@ -94,11 +97,6 @@ public class CanvasView extends View {
         int contentWidth = getWidth() - paddingLeft - paddingRight;
         int contentHeight = getHeight() - paddingTop - paddingBottom;
 
-        // Draw the text.
-        canvas.drawText(mExampleString,
-                paddingLeft + (contentWidth - mTextWidth) / 2,
-                paddingTop + (contentHeight + mTextHeight) / 2,
-                mTextPaint);
 
         // Draw the example drawable on top of the text.
         if (mExampleDrawable != null) {
@@ -123,10 +121,6 @@ public class CanvasView extends View {
      *
      * @param exampleString The example string attribute value to use.
      */
-    public void setExampleString(String exampleString) {
-        mExampleString = exampleString;
-        invalidateTextPaintAndMeasurements();
-    }
 
     /**
      * Gets the example color attribute value.
@@ -143,10 +137,6 @@ public class CanvasView extends View {
      *
      * @param exampleColor The example color attribute value to use.
      */
-    public void setExampleColor(int exampleColor) {
-        mExampleColor = exampleColor;
-        invalidateTextPaintAndMeasurements();
-    }
 
     /**
      * Gets the example dimension attribute value.
@@ -163,11 +153,6 @@ public class CanvasView extends View {
      *
      * @param exampleDimension The example dimension attribute value to use.
      */
-    public void setExampleDimension(float exampleDimension) {
-        mExampleDimension = exampleDimension;
-        invalidateTextPaintAndMeasurements();
-    }
-
     /**
      * Gets the example drawable attribute value.
      *

@@ -23,7 +23,7 @@ public class UserInfo {
     public UserInfo(DataSnapshot userSnap, Context c) { // 123
         DataSnapshot imgs = userSnap.child(IMAGES);
         mImagePointMap = new HashMap<>();
-        mImages = new LinkedList<>();
+        mImages = new ArrayList<>();
         for (DataSnapshot img : imgs.getChildren()) { // test
             mImages.add(img.getKey());
             List<int[]> nextContour = new ArrayList<>();
