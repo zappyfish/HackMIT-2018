@@ -230,6 +230,7 @@ public class CanvasView extends View {
                     break;
                 case MotionEvent.ACTION_UP:
                     isDrawing = false;
+                    sendToDatabaseWhenDone();
                     invalidate(); // add it here
                     break;
             }
@@ -244,5 +245,17 @@ public class CanvasView extends View {
         if (green < 0) green = 0;
         if (red > 255) red = 255;
         return 0xFF000000 | (((red & 0xff) << 16) | ((green & 0xff) << 8) | (blue & 0xff));
+    }
+
+    private void sendToDatabaseWhenDone() {
+        //
+        // img_name:
+        // { 1:
+        //  {   avg_energy: l23,
+        //      time_to_draw: 123
+        //      img : hexstring
+        //      difficulty_score: 0.5
+        //  }
+        // }
     }
 }
