@@ -60,11 +60,11 @@ public class CanvasView extends View {
         for (int[] pt : pts) {
             Paint paint = new Paint();
             paint.setColor(Color.BLACK);
-            canvas.drawCircle(pt[0], pt[1], 3, paint);
+            canvas.drawCircle(pt[0], pt[1], 6, paint);
         }
         Paint paint = new Paint();
         paint.setColor(Color.GREEN);
-        canvas.drawCircle(pts.get(0)[0], pts.get(0)[1], 10, paint);
+        canvas.drawCircle(pts.get(0)[0], pts.get(0)[1], 12, paint);
     }
 
     private void drawUserPoints(Canvas canvas) {
@@ -72,14 +72,19 @@ public class CanvasView extends View {
         int avg = energyToColor(ImageStateManager.getInstance(mContext).getAverageEnergy());
         Paint aP = new Paint();
         aP.setColor(avg);
-        for (int[] pt : pts) {
-            canvas.drawCircle(pt[0], pt[1], 3, aP);
+        for (int i = 0; i < pts.size(); i++) {
+            int[] pt = pts.get(i);
+            canvas.drawCircle(pt[0], pt[1], 6, aP);
+            if (i > 0) {
+                int[] nxtpt = pts.get(i-1);
+                canvas.drawLine(nxtpt[0], nxtpt[1], pt[0], pt[1], aP);
+            }
         }
         if (pts.size() > 0) {
             Paint curPaint = new Paint();
             curPaint.setColor(energyToColor(mCurEnergy));
             int len = pts.size() - 1;
-            canvas.drawCircle(pts.get(0)[0], pts.get(0)[1], 10, curPaint);
+            canvas.drawCircle(pts.get(len)[0], pts.get(len)[1], 20, curPaint);
         }
     }
 
@@ -208,7 +213,6 @@ public class CanvasView extends View {
 
     @Override
     public boolean onTouchEvent (MotionEvent e) {
-
         int x, y;
         if (isDrawing) {
             switch (e.getAction()) {
@@ -230,15 +234,15 @@ public class CanvasView extends View {
                     break;
             }
         }
-
         return true;
-
     }
 
     private int energyToColor(double energy) {
         int blue = 0, green = 255, red = 0;
-        green -= energy*5;
-        red += energy * 5;
+        green -= (energy * 10);
+        red += (energy * 10);
+        if (green < 0) green = 0;
+        if (red > 255) red = 255;
         return 0xFF000000 | (((red & 0xff) << 16) | ((green & 0xff) << 8) | (blue & 0xff));
     }
 }
