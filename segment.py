@@ -174,6 +174,3 @@ class Segmenter:
             end = path[i]
             cv2.line(img, start, end, (0, 255, 0), 2)
         cv2.imshow(Segmenter.WINDOW_NAME, img)
-
-
-
