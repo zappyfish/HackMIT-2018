@@ -256,6 +256,7 @@ public class CanvasView extends View {
         //      img : hexstring
         //      difficulty_score: 0.5
         //  }
+        //  2: {}
         // }
     }
 }
