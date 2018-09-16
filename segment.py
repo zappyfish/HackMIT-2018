@@ -15,7 +15,7 @@ class Segmenter:
     def __init__(self, filename):
         self._name = filename.split('.')[0]
         self._img = cv2.imread(filename)
-        self._img = scipy.misc.imresize(self._img, 1.3)
+        # self._img = scipy.misc.imresize(self._img, 1.3)
         x, y, c = self._img.shape
         self._blank = np.zeros((x, y, c), np.uint8)
         # self._blank.fill(255)

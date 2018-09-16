@@ -21,6 +21,8 @@ public class ImageStateManager {
     private int startX = 0;
     private int startY = 0;
 
+    private final static int LOL_BUFFER = 200;
+
     private double mAverageEnergy;
 
     private int[][] mGrid;
@@ -32,6 +34,7 @@ public class ImageStateManager {
         if (ourInstance == null) {
             ourInstance = new ImageStateManager(context);
         }
+        ourInstance.mContext = context;
         return ourInstance;
     }
 
@@ -80,6 +83,7 @@ public class ImageStateManager {
         addToQueue(x, y, visited, search);
         int searches = 0;
         while (!search.isEmpty()) {
+            Log.d("size", "" + search.size());
             searches++;
             int[] next = search.poll();
             int i = next[0], j = next[1];
@@ -94,27 +98,32 @@ public class ImageStateManager {
             }
         }
 
-        // Toast.makeText(mContext, "searches: " + searches, Toast.LENGTH_SHORT).show();
+        Log.d("searches", "" +searches);
         return null;
     }
 
     private void addToQueue(int x, int y, int[][] visited, Queue<int[]> search) {
         if (x >= 0 && x < mGrid.length && y >= 0 && y < mGrid[0].length) {
+            Log.d("status","valid");
+            Log.d("x, xmax, y, ymax", x + ", " + mGrid.length + ", " + y + ", " + mGrid[0].length);
             if (visited[x][y] == 0) {
                 search.add(new int[]{x, y});
                 visited[x][y] = 1;
-            } else {
             }
+        } else {
+            Log.d("status", "invalid, (x, y) is (" + x + "," + y + ")");
         }
     }
 
     public double getEnergy(int x, int y) {
         mUserPoints.add(new int[]{x, y});
         int[] nearest = getNearest(x, y);
-        if (nearest == null) {
-            nearest = new int[] {x, y};
-            Toast.makeText(mContext, "null for : " + x + "," + y, Toast.LENGTH_SHORT).show();
-        }
+//        if (nearest == null) {
+//            nearest = new int[] {x, y};
+//            Toast.makeText(mContext, "null for : " + x + "," + y, Toast.LENGTH_SHORT).show();
+//        } else {
+//            Toast.makeText(mContext, "not null", Toast.LENGTH_SHORT).show();
+//        }
         double energy = Math.sqrt(Math.pow(x - nearest[0], 2) + Math.pow(y - nearest[1], 2));
         Toast.makeText(mContext, "energy: " + energy, Toast.LENGTH_SHORT).show();
         updateAverageEnergy(energy);

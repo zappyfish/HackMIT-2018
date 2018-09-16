@@ -36,14 +36,10 @@ public class CanvasView extends View {
 
     private int mStepSize;
 
-    public CanvasView(Context context, int stepSize, int width, int height) {
+    public CanvasView(Context context, int stepSize) {
         super(context);
         mContext = context;
-        Log.d("view: ", "width: " + getWidth() + " height: " + getHeight());
-        mScaleFactorX = getWidth()/(width*1.f);
-        mScaleFactorY = getHeight()/(height*1.f);
-
-        mStepSize = 1;
+        mStepSize = stepSize;
         init(null, 0);
     }
 
@@ -73,15 +69,15 @@ public class CanvasView extends View {
 
     private void drawUserPoints(Canvas canvas) {
         List<int[]> pts = ImageStateManager.getInstance(mContext).getUserPoints();
-        Color avg = energyToColor(ImageStateManager.getInstance(mContext).getAverageEnergy());
+        int avg = energyToColor(ImageStateManager.getInstance(mContext).getAverageEnergy());
         Paint aP = new Paint();
-        aP.setColor(avg.toArgb());
+        aP.setColor(avg);
         for (int[] pt : pts) {
             canvas.drawCircle(pt[0], pt[1], 3, aP);
         }
         if (pts.size() > 0) {
             Paint curPaint = new Paint();
-            curPaint.setColor(energyToColor(mCurEnergy).toArgb());
+            curPaint.setColor(energyToColor(mCurEnergy));
             int len = pts.size() - 1;
             canvas.drawCircle(pts.get(0)[0], pts.get(0)[1], 10, curPaint);
         }
@@ -213,24 +209,19 @@ public class CanvasView extends View {
     @Override
     public boolean onTouchEvent (MotionEvent e) {
 
-        float px, py;
-        int ipy, ipx;
+        int x, y;
         if (isDrawing) {
             switch (e.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    px = e.getX() / mScaleFactorX;
-                    py = e.getY() / mScaleFactorY;
-                    ipy = (int) py;
-                    ipx = (int) px;
-                    mCurEnergy = ImageStateManager.getInstance(mContext).getEnergy(ipx, ipy);
+                    x = (int)e.getX();
+                    y = (int)e.getY();
+                    mCurEnergy = ImageStateManager.getInstance(mContext).getEnergy(x, y);
                     invalidate(); // add it here
                     break;
                 case MotionEvent.ACTION_MOVE:
-                    px = e.getX() / mScaleFactorX;
-                    py = e.getY() / mScaleFactorY;
-                    ipy = (int) py;
-                    ipx = (int) px;
-                    mCurEnergy = ImageStateManager.getInstance(mContext).getEnergy(ipx, ipy);
+                    x = (int)e.getX();
+                    y = (int)e.getY();
+                    mCurEnergy = ImageStateManager.getInstance(mContext).getEnergy(x, y);
                     invalidate(); // add it here
                     break;
                 case MotionEvent.ACTION_UP:
@@ -244,12 +235,10 @@ public class CanvasView extends View {
 
     }
 
-    private Color energyToColor(double energy) {
+    private int energyToColor(double energy) {
         int blue = 0, green = 255, red = 0;
         green -= energy*5;
         red += energy * 5;
-        if (green < 0) green = 0;
-        if (red > 255) red = 255;
-        return Color.valueOf(red, green, blue);
+        return 0xFF000000 | (((red & 0xff) << 16) | ((green & 0xff) << 8) | (blue & 0xff));
     }
 }
